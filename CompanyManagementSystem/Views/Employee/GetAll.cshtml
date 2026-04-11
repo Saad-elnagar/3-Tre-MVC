@@ -1,0 +1,166 @@
+﻿@model List<CompanyManagementMVC.BLL.ModelVM.Employee.GetEmployeeVM>
+@{
+    ViewData["Title"] = "Employees";
+    var total = Model.Count;
+    var active = Model.Count(e => !e.IsDeleted);
+    var inactive = Model.Count(e => e.IsDeleted);
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="mb-0">Employees</h2>
+        <small class="text-muted">Manage your company staff</small>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        + Add Employee
+    </a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-4">
+        <div class="bg-light rounded-3 p-3">
+            <div class="text-muted small mb-1">Total</div>
+            <div class="fs-4 fw-bold">@total</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="bg-light rounded-3 p-3">
+            <div class="text-muted small mb-1">Active</div>
+            <div class="fs-4 fw-bold text-success">@active</div>
+        </div>
+    </div>
+    <div class="col-4">
+        <div class="bg-light rounded-3 p-3">
+            <div class="text-muted small mb-1">Inactive</div>
+            <div class="fs-4 fw-bold text-secondary">@inactive</div>
+        </div>
+    </div>
+</div>
+
+<div class="mb-3">
+    <input type="text" id="searchInput" class="form-control"
+           placeholder="Search by name..." />
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">
+        No employees found.
+    </div>
+}
+else
+{
+    <div class="card border shadow-sm rounded-3 overflow-hidden">
+        <table class="table table-hover align-middle mb-0" id="employeeTable">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-uppercase small text-muted px-3">Employee</th>
+                    <th class="text-uppercase small text-muted">Salary</th>
+                    <th class="text-uppercase small text-muted">Status</th>
+                    <th class="text-uppercase small text-muted text-end pe-3">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var emp in Model)
+                {
+                    var initials = string.Concat(
+                    emp.Name.Split(' ')
+                    .Where(w => w.Length > 0)
+                    .Take(2)
+                    .Select(w => w[0])
+                    );
+
+                    <tr>
+                        <td class="px-3">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                     style="width:38px;height:38px;min-width:38px;
+                                                    background:#EEF2FF;color:#4F46E5;font-size:12px">
+                                    @initials
+                                </div>
+                                <div>
+                                    <div class="fw-semibold small">@emp.Name</div>
+                                    <div class="text-muted" style="font-size:11px">#@emp.Id</div>
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="fw-semibold small">@emp.Salary.ToString("C")</td>
+
+                        <td>
+                            @if (!emp.IsDeleted)
+                            {
+                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1"
+                                      style="background:#dcfce7;color:#15803d;font-size:11px">
+                                    <span style="width:5px;height:5px;border-radius:50%;
+                                                             background:#16a34a;display:inline-block"></span>
+                                    Active
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge rounded-pill d-inline-flex align-items-center gap-1"
+                                      style="background:#f1f5f9;color:#64748b;font-size:11px">
+                                    <span style="width:5px;height:5px;border-radius:50%;
+                                                             background:#94a3b8;display:inline-block"></span>
+                                    Inactive
+                                </span>
+                            }
+                        </td>
+
+                        <td class="text-end pe-3">
+                            <div class="d-flex justify-content-end gap-2">
+
+                                <a asp-action="Details" asp-route-id="@emp.Id"
+                                   class="btn btn-sm btn-outline-secondary"
+                                   style="font-size:11px;padding:3px 10px">
+                                    Details
+                                </a>
+
+                                <a asp-action="Edit" asp-route-id="@emp.Id"
+                                   class="btn btn-sm btn-outline-primary"
+                                   style="font-size:11px;padding:3px 10px">
+                                    Edit
+                                </a>
+
+                                <form asp-action="ToggleState" asp-route-id="@emp.Id"
+                                      method="post" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit"
+                                            class="btn btn-sm @(emp.IsDeleted ? "btn-outline-success" : "btn-outline-warning")"
+                                            style="font-size:11px;padding:3px 10px">
+                                        @(emp.IsDeleted ? "Activate" : "Deactivate")
+                                    </button>
+                                </form>
+
+                                <form asp-action="Delete" asp-route-id="@emp.Id"
+                                      method="post" class="d-inline"
+                                      onsubmit="return confirm('Are you sure you want to delete @emp.Name?')">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit"
+                                            class="btn btn-sm btn-outline-danger"
+                                            style="font-size:11px;padding:3px 10px">
+                                        Delete
+                                    </button>
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('searchInput')?.addEventListener('input', function () {
+            const q = this.value.toLowerCase();
+            document.querySelectorAll('#employeeTable tbody tr').forEach(row => {
+                const name = row.querySelector('td')?.innerText.toLowerCase() ?? '';
+                row.style.display = name.includes(q) ? '' : 'none';
+            });
+        });
+    </script>
+}

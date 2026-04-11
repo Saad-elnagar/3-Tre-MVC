@@ -1,3 +1,7 @@
+using CompanyManagementMVC.BLL.Service.Abstraction;
+using CompanyManagementMVC.BLL.Service.Implementation;
+using CompanyManagementMVC.DAL.Repo.Abstraction;
+using CompanyManagementMVC.DAL.Repo.Implementation;
 using System;
 
 namespace CompanyManagementSystem
@@ -10,8 +14,11 @@ namespace CompanyManagementSystem
       
 
 
-            // Add services to the container.
+            
             builder.Services.AddControllersWithViews();
+            builder.Services.AddScoped<IEmployeeRepo, EmployeeRepo>();
+            builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+
 
             var app = builder.Build();
 

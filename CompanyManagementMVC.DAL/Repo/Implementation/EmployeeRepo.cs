@@ -2,7 +2,7 @@
 
 namespace CompanyManagementMVC.DAL.Repo.Implementation
 {
-    internal class EmployeeRepo : IEmployeeRepo
+    public class EmployeeRepo : IEmployeeRepo
     {
         public async Task<bool> AddEmployeeAsync(Employee employee)
         {
