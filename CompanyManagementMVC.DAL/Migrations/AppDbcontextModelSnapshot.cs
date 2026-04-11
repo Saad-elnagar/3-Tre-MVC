@@ -39,7 +39,7 @@ namespace CompanyManagementMVC.DAL.Migrations
                     b.Property<string>("DeletedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("DeletedOn")
+                    b.Property<DateTime?>("DeletedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsDeleted")
@@ -55,7 +55,7 @@ namespace CompanyManagementMVC.DAL.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedOn")
+                    b.Property<DateTime?>("UpdatedOn")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
