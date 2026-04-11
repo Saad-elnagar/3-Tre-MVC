@@ -30,6 +30,13 @@
             UpdatedOn = DateTime.UtcNow;
         }
 
+        public void SetSalary(decimal salary, string updatedBy)
+        {
+            Salary = salary;
+            UpdatedBy = updatedBy;
+            UpdatedOn = DateTime.UtcNow;
+        }
+
         public void Delete(string deletedBy)
         {
             IsDeleted = true;

@@ -6,7 +6,7 @@ namespace CompanyManagementMVC.DAL.Repo.Abstraction
     {
         Task<bool> AddEmployeeAsync(Employee employee);
         Task<bool> DeleteEmployeeAsync(int id);
-        Task<bool> UpdateEmployeeAsync(int id, string name);
+        Task<bool> UpdateEmployeeAsync(int id, string name, decimal salary);
         Task<bool> ToggleStateAsync(int id);
         Task<Employee?> GetByIdAsync(int id);
         Task<List<Employee>> GetAllAsync(Expression<Func<Employee, bool>>? filter = null);

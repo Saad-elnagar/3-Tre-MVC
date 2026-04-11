@@ -95,11 +95,11 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
             }
         }
 
-        public async Task<Response<bool>> UpdateEmployeeAsync(int id, string name)
+        public async Task<Response<bool>> UpdateEmployeeAsync(int id, string name, decimal salary)
         {
             try
             {
-                var result = await _employeeRepo.UpdateEmployeeAsync(id, name);
+                var result = await _employeeRepo.UpdateEmployeeAsync(id, name, salary);
 
                 return result
                     ? Response<bool>.Success(true, "Employee updated successfully.")

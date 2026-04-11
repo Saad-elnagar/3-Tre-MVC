@@ -84,7 +84,7 @@ namespace CompanyManagementSystem.PL.Controllers
        
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, string name)
+        public async Task<IActionResult> Edit(int id, string name,decimal salary)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -92,7 +92,7 @@ namespace CompanyManagementSystem.PL.Controllers
                 return View();
             }
 
-            var result = await _employeeService.UpdateEmployeeAsync(id, name);
+            var result = await _employeeService.UpdateEmployeeAsync(id, name, salary);
 
             if (!result.IsSuccess)
             {

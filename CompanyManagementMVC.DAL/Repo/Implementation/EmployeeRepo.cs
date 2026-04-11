@@ -39,7 +39,7 @@ namespace CompanyManagementMVC.DAL.Repo.Implementation
             }
         }
 
-        public async Task<bool> UpdateEmployeeAsync(int id, string name)
+        public async Task<bool> UpdateEmployeeAsync(int id, string name, decimal salary)
         {
             await using var context = new AppDbcontext();
             try
@@ -50,6 +50,7 @@ namespace CompanyManagementMVC.DAL.Repo.Implementation
                 if (employee is null) return false;
 
                 employee.SetName(name, "system");
+                employee.SetSalary(salary, "system");
                 return await context.SaveChangesAsync() > 0;
             }
             catch (Exception ex)
