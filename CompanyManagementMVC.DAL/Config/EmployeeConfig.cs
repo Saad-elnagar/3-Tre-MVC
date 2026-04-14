@@ -1,0 +1,20 @@
+﻿
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
+
+namespace CompanyManagementMVC.DAL.Config
+{
+    internal class EmployeeConfig : IEntityTypeConfiguration<Employee>
+    {
+        public void Configure(EntityTypeBuilder<Employee> builder)
+        {
+            builder.HasKey(e => e.Id);
+            builder.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+            builder.Property(e => e.Salary)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+
+        }
+    }
+}
