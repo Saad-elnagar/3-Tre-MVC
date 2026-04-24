@@ -1,14 +1,10 @@
-﻿using System.Linq.Expressions;
-
-namespace CompanyManagementMVC.DAL.Repo.Abstraction
+﻿namespace CompanyManagementMVC.DAL.Repo.Abstraction
 {
-    public interface IEmployeeRepo
+    public interface IEmployeeRepo : IGenericRepo<Employee>
     {
-        Task<bool> AddEmployeeAsync(Employee employee);
-        Task<bool> DeleteEmployeeAsync(int id);
-        Task<bool> UpdateEmployeeAsync(int id, string name, decimal salary);
+      
         Task<bool> ToggleStateAsync(int id);
-        Task<Employee?> GetByIdAsync(int id);
-        Task<List<Employee>> GetAllAsync(Expression<Func<Employee, bool>>? filter = null);
+        Task<bool> DeleteAsync(int id);
+        Task<bool> UpdateEmployeeAsync(int id, string name, decimal salary);
     }
 }

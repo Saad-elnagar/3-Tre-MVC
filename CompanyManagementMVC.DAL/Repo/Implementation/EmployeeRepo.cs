@@ -1,117 +1,46 @@
 ﻿
+using CompanyManagementMVC.DAL.Entity;
+using CompanyManagementMVC.DAL.Repo.Abstraction;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyManagementMVC.DAL.Repo.Implementation
 {
-    public class EmployeeRepo : IEmployeeRepo
+    public class EmployeeRepo : GenericRepo<Employee>, IEmployeeRepo
     {
-        public async Task<bool> AddEmployeeAsync(Employee employee)
-        {
-            await using var context = new AppDbcontext();
-            try
-            {
-                await context.Employees.AddAsync(employee);
-                return await context.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                
-                return false;
-            }
+        public EmployeeRepo(AppDbcontext context) : base(context) {
+           
         }
 
-        public async Task<bool> DeleteEmployeeAsync(int id)
+        public Task<bool> DeleteAsync(int id)
         {
-            await using var context = new AppDbcontext();
-            try
-            {
-                var employee = await context.Employees
-                    .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
+            var emp = _context.Employees.Find(id);
 
-                if (employee is null) return false;
+            if (emp == null) return Task.FromResult(false);
 
-                employee.Delete("system");
-                return await context.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                // Log ex
-                return false;
-            }
-        }
-
-        public async Task<bool> UpdateEmployeeAsync(int id, string name, decimal salary)
-        {
-            await using var context = new AppDbcontext();
-            try
-            {
-                var employee = await context.Employees
-                    .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
-
-                if (employee is null) return false;
-
-                employee.SetName(name, "system");
-                employee.SetSalary(salary, "system");
-                return await context.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-                
-                return false;
-            }
+            _context.Employees.Remove(emp);
+            return Task.FromResult(true);
         }
 
         public async Task<bool> ToggleStateAsync(int id)
         {
-            await using var context = new AppDbcontext();
-            try
-            {
-                var employee = await context.Employees
-                    .FirstOrDefaultAsync(e => e.Id == id);
+            var emp = await GetByIdAsync(id);
+            if (emp == null) return false;
 
-                if (employee is null) return false;
-
-                employee.ToggleActive("system");
-                return await context.SaveChangesAsync() > 0;
-            }
-            catch (Exception ex)
-            {
-               
-                return false;
-            }
+            emp.IsActive = !emp.IsActive; 
+            await SaveChangesAsync();
+            return true;
         }
 
-        public async Task<Employee?> GetByIdAsync(int id)
+        public async Task<bool> UpdateEmployeeAsync(int id, string name, decimal salary)
         {
-            await using var context = new AppDbcontext();
-            try
-            {
-                return await context.Employees
-                    .FirstOrDefaultAsync(e => e.Id == id && !e.IsDeleted);
-            }
-            catch (Exception ex)
-            {
-                // Log ex
-                return null;
-            }
-        }
+            var emp = await GetByIdAsync(id);
+            if (emp == null) return false;
 
-        public async Task<List<Employee>> GetAllAsync(Expression<Func<Employee, bool>>? filter = null)
-        {
-            await using var context = new AppDbcontext();
-            try
-            {
-                var query = context.Employees.Where(e => !e.IsDeleted);
-
-                if (filter is not null)
-                    query = query.Where(filter);
-
-                return await query.ToListAsync();
-            }
-            catch (Exception ex)
-            {
-               
-                return new List<Employee>();
-            }
+            emp.Name = name;
+            emp.Salary = salary;
+            Update(emp);
+            await SaveChangesAsync();
+            return true;
         }
     }
 }

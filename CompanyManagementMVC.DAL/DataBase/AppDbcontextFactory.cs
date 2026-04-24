@@ -1,12 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using Microsoft.EntityFrameworkCore;
+//using Microsoft.EntityFrameworkCore.Design;
+//using Microsoft.Extensions.Configuration;
 
-namespace CompanyManagementMVC.DAL.DataBase
-{
-    internal class AppDbcontextFactory
-    {
-    }
-}
+
+//namespace CompanyManagementMVC.DAL.DataBase
+//{
+//    public class AppDbcontextFactory : IDesignTimeDbContextFactory<AppDbcontext>
+//    {
+//        public AppDbcontext CreateDbContext(string[] args)
+//        {
+//            var optionsBuilder = new DbContextOptionsBuilder<AppDbcontext>();
+
+//            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "CompanyManagementSystem");
+
+//            var configuration = new ConfigurationBuilder()
+//                .SetBasePath(basePath)
+//                .AddJsonFile("appsettings.json", optional: false)
+//                .Build();
+
+//            var connectionString = configuration.GetConnectionString("DefaultConnection");
+
+//            optionsBuilder.UseSqlServer(connectionString);
+
+//            return new AppDbcontext(optionsBuilder.Options);
+//        }
+//    }
+//}

@@ -66,10 +66,17 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
         {
             try
             {
-                var employee = new Employee(model.Name, model.Salary, model.CreatedBy);
-                var result = await _employeeRepo.AddEmployeeAsync(employee);
+                var employee = new Employee()
+                {
+                    Name = model.Name,
+                    Salary = model.Salary,
+                    IsDeleted = false
+                };
 
-                return result
+                await _employeeRepo.AddAsync(employee);
+                var result = await _employeeRepo.SaveChangesAsync();
+
+                return result > 0
                     ? Response<bool>.Success(true, "Employee added successfully.")
                     : Response<bool>.Failure("Failed to add employee.");
             }
@@ -83,7 +90,7 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
         {
             try
             {
-                var result = await _employeeRepo.DeleteEmployeeAsync(id);
+                var result = await _employeeRepo.DeleteAsync(id);
 
                 return result
                     ? Response<bool>.Success(true, "Employee deleted successfully.")
@@ -99,11 +106,20 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
         {
             try
             {
-                var result = await _employeeRepo.UpdateEmployeeAsync(id, name, salary);
+                var employee = await _employeeRepo.GetByIdAsync(id);
 
-                return result
+                if (employee is null)
+                    return Response<bool>.Failure($"Employee with ID {id} not found.");
+
+                employee.Name = name;
+                employee.Salary = salary;
+
+                _employeeRepo.Update(employee);
+                var result = await _employeeRepo.SaveChangesAsync();
+
+                return result > 0
                     ? Response<bool>.Success(true, "Employee updated successfully.")
-                    : Response<bool>.Failure($"Employee with ID {id} not found.");
+                    : Response<bool>.Failure("Failed to update employee.");
             }
             catch (Exception ex)
             {

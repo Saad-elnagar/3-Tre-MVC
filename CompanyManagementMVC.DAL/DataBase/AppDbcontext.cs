@@ -2,15 +2,19 @@
 {
     public class AppDbcontext : DbContext
     {
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public AppDbcontext(DbContextOptions<AppDbcontext> options) : base(options)
         {
-            optionsBuilder.UseSqlServer(
-                "Server=.;Database=CompanyManagementDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=true"
-            );
         }
 
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Department> Departments { get; set; }
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbcontext).Assembly);
+        }
     }
 }
 

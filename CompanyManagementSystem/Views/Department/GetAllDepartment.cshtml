@@ -1,0 +1,153 @@
+﻿@model List<CompanyManagementMVC.BLL.ModelVM.Department.DepartmentVM>
+@{
+    ViewData["Title"] = "All Departments";
+}
+
+<style>
+    .container h2 {
+        font-size: 20px;
+        font-weight: 500;
+        margin-bottom: 0;
+    }
+
+    .table {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e5e5e5;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .table thead.table-dark th {
+        background-color: #f5f5f4 !important;
+        color: #6b6b6b;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border-bottom: 1px solid #e5e5e5;
+        padding: 11px 16px;
+    }
+
+    .table-bordered td,
+    .table-bordered th {
+        border-color: #ebebeb;
+        padding: 12px 16px;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .table-striped > tbody > tr:nth-of-type(odd) > td {
+        background-color: #fafaf9;
+    }
+
+    .table tbody tr:hover td {
+        background-color: #f5f4f0 !important;
+        transition: background 0.15s;
+    }
+
+    .table tbody td:first-child {
+        font-family: monospace;
+        font-size: 12px;
+        color: #888;
+        background: #f5f5f4;
+        font-weight: 500;
+    }
+
+    .table tbody td:nth-child(3) {
+        color: #888;
+        font-size: 13px;
+    }
+
+    .btn-warning.btn-sm {
+        background: #faeeda;
+        color: #633806;
+        border: 1px solid #e49a20;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .btn-warning.btn-sm:hover {
+        background: #fac775;
+        color: #633806;
+    }
+
+    .btn-danger.btn-sm {
+        background: #fcebeb;
+        color: #501313;
+        border: 1px solid #e04b4a;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 6px;
+    }
+
+    .btn-danger.btn-sm:hover {
+        background: #f7c1c1;
+        color: #501313;
+    }
+
+    .btn-primary.mb-3 {
+        background: #178564;
+        border-color: #178564;
+        font-size: 13px;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-weight: 500;
+    }
+
+    .btn-primary.mb-3:hover {
+        background: #0f6e56;
+        border-color: #0f6e56;
+    }
+
+    .empty-cell {
+        text-align: center;
+        color: #888;
+        font-size: 14px;
+        padding: 2rem !important;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+        <h2>All Departments</h2>
+        <a asp-action="CreateDepatment" asp-controller="Department" class="btn btn-primary mb-3">
+            + Add New Department
+        </a>
+    </div>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Id</td>
+                        <td>@item.Name</td>
+                        <td>@item.Description</td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="empty-cell">No departments found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
