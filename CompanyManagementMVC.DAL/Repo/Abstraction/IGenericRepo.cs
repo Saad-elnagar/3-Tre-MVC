@@ -1,15 +1,16 @@
-﻿using System.Linq.Expressions;
+﻿using CompanyManagementMVC.DAL.Specification;
 
 namespace CompanyManagementMVC.DAL.Repo.Abstraction
 {
-    public interface IGenericRepo<T> where T : ModelBase
+    public interface IGenericRepo<T> where T : class
     {
         Task<T?> GetByIdAsync(int id);
-        Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null);
+        Task<T?> GetBySpecAsync(ISpecification<T> spec);           // ✅ جديد
+        Task<IEnumerable<T>> GetAllAsync(ISpecification<T> spec);  // ✅ تعديل
+        Task<int> CountAsync(ISpecification<T> spec);              // ✅ جديد
         Task AddAsync(T entity);
         void Update(T entity);
         void Delete(T entity);
-        Task<bool> ExistsAsync(Expression<Func<T, bool>> filter);
         Task<int> SaveChangesAsync();
     }
 }

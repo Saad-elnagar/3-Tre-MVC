@@ -1,0 +1,31 @@
+﻿@using CompanyManagementMVC.BLL.ModelVM.Department
+@model CreateDepartmentVM
+
+<div class="container mt-4">
+    <h2>Create Department</h2>
+
+    <form asp-action="CreateDepartmentPost" method="post">
+        <!-- ✅ نفس اسم الـ Action -->
+
+        <div asp-validation-summary="All" class="text-danger mb-3"></div>  <!-- ✅ All عشان يظهر كل Errors -->
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label"></label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Description" class="form-label"></label>
+            <textarea asp-for="Description" class="form-control" rows="3"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">Create</button>
+        <a asp-action="GetAllDepartment" class="btn btn-secondary">Back</a>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,32 +1,31 @@
-﻿using CompanyManagementMVC.BLL.ModelVM.Department;
+﻿using AutoMapper;
+using CompanyManagementMVC.BLL.ModelVM.Department;
 using CompanyManagementMVC.BLL.ModelVM.Response;
 using CompanyManagementMVC.BLL.Service.Abstraction;
 using CompanyManagementMVC.DAL.Entity;
 using CompanyManagementMVC.DAL.Repo.Abstraction;
+using CompanyManagementMVC.DAL.Specification;
 
 namespace CompanyManagementMVC.BLL.Service.Implementation
 {
     public class DepartmentService : IDepartmentService
     {
         private readonly IDepartmentRepo _departmentRepo;
+        private readonly IMapper _mapper;
 
-        public DepartmentService(IDepartmentRepo departmentRepo)
+        public DepartmentService(IDepartmentRepo departmentRepo, IMapper mapper)
         {
             _departmentRepo = departmentRepo;
+            _mapper = mapper;
         }
 
         public async Task<Response<List<DepartmentVM>>> GetAllDepartmentsAsync()
         {
             try
             {
-                var departments = await _departmentRepo.GetAllAsync(d => !d.IsDeleted);
-
-                var mapped = departments.Select(d => new DepartmentVM
-                {
-                    Id = d.Id,
-                    Name = d.Name,
-                    Description = d.Description
-                }).ToList();
+                var spec = new DepartmentSpecification();           
+                var departments = await _departmentRepo.GetAllAsync(spec);
+                var mapped = _mapper.Map<List<DepartmentVM>>(departments);  
 
                 return Response<List<DepartmentVM>>.Success(mapped, "Departments retrieved.");
             }
@@ -40,18 +39,12 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
         {
             try
             {
-                var department = new Department
-                {
-                    Name = model.Name,
-                    Description = model.Description,
-                    CreatedBy= model.CreatedBy,
-                    CreatedOn= model.CreatedOn,
-                    IsDeleted = false
-                };
+                var department = _mapper.Map<Department>(model);    
+                department.IsDeleted = false;
 
                 await _departmentRepo.AddAsync(department);
                 var result = await _departmentRepo.SaveChangesAsync();
-               
+
                 return result > 0
                     ? Response<int>.Success(department.Id, "Department added successfully.")
                     : Response<int>.Failure("Failed to add department.");
@@ -87,16 +80,13 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
         {
             try
             {
-                var department = await _departmentRepo.GetByIdAsync(id);
+                var spec = new DepartmentSpecification(id);         
+                var department = await _departmentRepo.GetBySpecAsync(spec);
+
                 if (department is null)
                     return Response<DepartmentVM?>.Failure($"Department with ID {id} not found.");
 
-                var mapped = new DepartmentVM
-                {
-                    Id = department.Id,
-                    Name = department.Name,
-                    Description = department.Description
-                };
+                var mapped = _mapper.Map<DepartmentVM>(department); 
 
                 return Response<DepartmentVM?>.Success(mapped);
             }
@@ -114,8 +104,7 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
                 if (department is null)
                     return Response<int>.Failure($"Department with ID {model.Id} not found.");
 
-                department.Name = model.Name;
-                department.Description = model.Description;
+                _mapper.Map(model, department);                    
 
                 _departmentRepo.Update(department);
                 var result = await _departmentRepo.SaveChangesAsync();

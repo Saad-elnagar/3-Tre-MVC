@@ -10,7 +10,7 @@ namespace CompanyManagementMVC.BLL.ModelVM.Department
     {
         public string Name { get; set; }
         public string? Description { get; set; }
-        public string CreatedBy { get; set; } = default!;
+        public string? CreatedBy { get; set; } = default!;
         public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
         
 

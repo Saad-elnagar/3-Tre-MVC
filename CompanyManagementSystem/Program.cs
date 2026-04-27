@@ -1,9 +1,11 @@
-﻿using CompanyManagementMVC.BLL.Service.Abstraction;
+﻿using CompanyManagementMVC.BLL.Mapper;
+using CompanyManagementMVC.BLL.Service.Abstraction;
 using CompanyManagementMVC.BLL.Service.Implementation;
 using CompanyManagementMVC.DAL.DataBase;
 using CompanyManagementMVC.DAL.Repo.Abstraction;
 using CompanyManagementMVC.DAL.Repo.Implementation;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CompanyManagementSystem
 {
@@ -25,6 +27,7 @@ namespace CompanyManagementSystem
             // 3. Services
             builder.Services.AddScoped<IEmployeeService, EmployeeService>();
             builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+            builder.Services.AddAutoMapper(M=> M.AddProfile<MappingProfile>());
 
             // 4. Controllers & Views
             builder.Services.AddControllersWithViews();

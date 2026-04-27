@@ -6,6 +6,8 @@
 
         public string Name { get; set; } = default!;
         public decimal Salary { get; set; }
-       
+        public Department? Department { get; set; } 
+        public int? DepartmentId { get; set; }
+
     }
 }

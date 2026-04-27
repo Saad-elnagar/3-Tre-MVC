@@ -1,11 +1,11 @@
-﻿using CompanyManagementMVC.DAL.DataBase;
+﻿
 using CompanyManagementMVC.DAL.Repo.Abstraction;
+using CompanyManagementMVC.DAL.Specification;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace CompanyManagementMVC.DAL.Repo.Implementation
 {
-    public class GenericRepo<T> : IGenericRepo<T> where T : ModelBase
+    public class GenericRepo<T> : IGenericRepo<T> where T : class
     {
         protected readonly AppDbcontext _context;
         protected readonly DbSet<T> _dbSet;
@@ -19,12 +19,17 @@ namespace CompanyManagementMVC.DAL.Repo.Implementation
         public virtual async Task<T?> GetByIdAsync(int id)
             => await _dbSet.FindAsync(id);
 
-        public virtual async Task<IEnumerable<T>> GetAllAsync(Expression<Func<T, bool>>? filter = null)
-        {
-            if (filter != null)
-                return await _dbSet.Where(filter).ToListAsync();
-            return await _dbSet.ToListAsync();
-        }
+        // ✅ جديد: GetBySpec
+        public virtual async Task<T?> GetBySpecAsync(ISpecification<T> spec)
+            => await ApplySpecification(spec).FirstOrDefaultAsync();
+
+        // ✅ تعديل: GetAll بالـ Spec
+        public virtual async Task<IEnumerable<T>> GetAllAsync(ISpecification<T> spec)
+            => await ApplySpecification(spec).ToListAsync();
+
+        // ✅ جديد: Count
+        public virtual async Task<int> CountAsync(ISpecification<T> spec)
+            => await ApplySpecification(spec).CountAsync();
 
         public virtual async Task AddAsync(T entity)
             => await _dbSet.AddAsync(entity);
@@ -35,10 +40,13 @@ namespace CompanyManagementMVC.DAL.Repo.Implementation
         public virtual void Delete(T entity)
             => _dbSet.Remove(entity);
 
-        public virtual async Task<bool> ExistsAsync(Expression<Func<T, bool>> filter)
-            => await _dbSet.AnyAsync(filter);
-
         public virtual async Task<int> SaveChangesAsync()
             => await _context.SaveChangesAsync();
+
+        // ✅ الـ Core بتاع الـ Pattern
+        private IQueryable<T> ApplySpecification(ISpecification<T> spec)
+        {
+            return SpecificationEvaluator<T>.GetQuery(_dbSet.AsQueryable(), spec);
+        }
     }
 }
