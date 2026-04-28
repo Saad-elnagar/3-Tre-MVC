@@ -19,15 +19,14 @@ namespace CompanyManagementMVC.DAL.Repo.Implementation
         public virtual async Task<T?> GetByIdAsync(int id)
             => await _dbSet.FindAsync(id);
 
-        // ✅ جديد: GetBySpec
         public virtual async Task<T?> GetBySpecAsync(ISpecification<T> spec)
             => await ApplySpecification(spec).FirstOrDefaultAsync();
 
-        // ✅ تعديل: GetAll بالـ Spec
+        
         public virtual async Task<IEnumerable<T>> GetAllAsync(ISpecification<T> spec)
             => await ApplySpecification(spec).ToListAsync();
 
-        // ✅ جديد: Count
+        
         public virtual async Task<int> CountAsync(ISpecification<T> spec)
             => await ApplySpecification(spec).CountAsync();
 
@@ -43,7 +42,7 @@ namespace CompanyManagementMVC.DAL.Repo.Implementation
         public virtual async Task<int> SaveChangesAsync()
             => await _context.SaveChangesAsync();
 
-        // ✅ الـ Core بتاع الـ Pattern
+        
         private IQueryable<T> ApplySpecification(ISpecification<T> spec)
         {
             return SpecificationEvaluator<T>.GetQuery(_dbSet.AsQueryable(), spec);

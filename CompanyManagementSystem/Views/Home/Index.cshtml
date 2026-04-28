@@ -1,8 +1,476 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<style>
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        --warning-gradient: linear-gradient(135deg, #f59f00 0%, #f76707 100%);
+        --danger-gradient: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+        --info-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --dark-gradient: linear-gradient(135deg, #2d3436 0%, #636e72 100%);
+        --card-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        --hover-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .dashboard-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 4rem 2rem;
+        border-radius: 24px;
+        margin-bottom: 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .dashboard-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .dashboard-header::after {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            right: -5%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .dashboard-header h1 {
+            font-weight: 800;
+            font-size: 3rem;
+            margin: 0;
+            position: relative;
+        }
+
+        .dashboard-header p {
+            opacity: 0.9;
+            font-size: 1.2rem;
+            margin: 1rem 0 0 0;
+            position: relative;
+        }
+
+    .stat-card {
+        background: white;
+        border-radius: 20px;
+        padding: 1.5rem;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--hover-shadow);
+        }
+
+    .stat-icon {
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: white;
+    }
+
+    .stat-info h3 {
+        font-weight: 700;
+        font-size: 1.8rem;
+        margin: 0;
+        color: #2d3436;
+    }
+
+    .stat-info p {
+        color: #636e72;
+        margin: 0;
+        font-size: 0.9rem;
+    }
+
+    .section-title {
+        font-weight: 700;
+        color: #2d3436;
+        margin: 2rem 0 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.3rem;
+    }
+
+    .nav-card {
+        background: white;
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+        height: 100%;
+        border: 2px solid transparent;
+    }
+
+        .nav-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--hover-shadow);
+            color: inherit;
+            border-color: #667eea;
+        }
+
+    .nav-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        margin: 0 auto 1.5rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .nav-card:hover .nav-icon {
+        transform: scale(1.1) rotate(5deg);
+    }
+
+    .nav-card h3 {
+        font-weight: 700;
+        color: #2d3436;
+        margin-bottom: 0.5rem;
+        font-size: 1.3rem;
+    }
+
+    .nav-card p {
+        color: #636e72;
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    .quick-action {
+        background: white;
+        border-radius: 16px;
+        padding: 1.2rem 1.5rem;
+        box-shadow: var(--card-shadow);
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        border: 2px solid transparent;
+    }
+
+        .quick-action:hover {
+            transform: translateX(5px);
+            box-shadow: var(--hover-shadow);
+            color: inherit;
+            border-color: #667eea;
+        }
+
+    .quick-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        transition: all 0.3s ease;
+    }
+
+    .quick-action:hover .quick-icon {
+        transform: scale(1.1);
+    }
+
+    .quick-info h5 {
+        font-weight: 700;
+        color: #2d3436;
+        margin: 0;
+    }
+
+    .quick-info small {
+        color: #636e72;
+    }
+
+    .feature-badge {
+        display: inline-block;
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        margin-top: 0.5rem;
+    }
+
+    .bg-gradient-primary {
+        background: var(--primary-gradient);
+    }
+
+    .bg-gradient-success {
+        background: var(--success-gradient);
+    }
+
+    .bg-gradient-warning {
+        background: var(--warning-gradient);
+    }
+
+    .bg-gradient-danger {
+        background: var(--danger-gradient);
+    }
+
+    .bg-gradient-info {
+        background: var(--info-gradient);
+    }
+
+    .bg-gradient-dark {
+        background: var(--dark-gradient);
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.6s ease-out;
+    }
+
+    @@keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+</style>
+
+<div class="container-fluid px-4 py-4 animate-fade-in">
+
+    <!-- Header -->
+    <div class="dashboard-header">
+        <h1><i class="bi bi-grid-3x3-gap-fill me-3"></i>Company Management System</h1>
+        <p>Your complete solution for managing employees and departments</p>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-gradient-primary">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@ViewBag.EmployeeCount</h3>
+                    <p>Total Employees</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-gradient-success">
+                    <i class="bi bi-building-fill"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@ViewBag.DepartmentCount</h3>
+                    <p>Departments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-gradient-warning">
+                    <i class="bi bi-person-check-fill"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@ViewBag.ActiveEmployees</h3>
+                    <p>Active Employees</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="stat-card">
+                <div class="stat-icon bg-gradient-info">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>@ViewBag.TotalSalaries</h3>
+                    <p>Total Salaries</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Navigation Cards -->
+    <h4 class="section-title">
+        <i class="bi bi-compass-fill text-primary"></i>
+        Main Modules
+    </h4>
+    <div class="row g-4 mb-4">
+
+        <!-- Employees Module -->
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Employee" asp-action="GetAll" class="nav-card">
+                <div class="nav-icon bg-gradient-primary">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+                <h3>Employees</h3>
+                <p>Manage all employees, view details, edit information, and track status</p>
+                <span class="feature-badge bg-primary bg-opacity-10 text-primary">
+                    <i class="bi bi-arrow-right me-1"></i>Go to Employees
+                </span>
+            </a>
+        </div>
+
+        <!-- Departments Module -->
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Department" asp-action="GetAllDepartment" class="nav-card">
+                <div class="nav-icon bg-gradient-success">
+                    <i class="bi bi-building-fill"></i>
+                </div>
+                <h3>Departments</h3>
+                <p>Organize departments, view employees per department, and manage structure</p>
+                <span class="feature-badge bg-success bg-opacity-10 text-success">
+                    <i class="bi bi-arrow-right me-1"></i>Go to Departments
+                </span>
+            </a>
+        </div>
+
+        <!-- Add Employee Quick -->
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Employee" asp-action="Create" class="nav-card">
+                <div class="nav-icon bg-gradient-warning">
+                    <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <h3>Add Employee</h3>
+                <p>Quick access to add a new employee with department assignment</p>
+                <span class="feature-badge bg-warning bg-opacity-10 text-warning">
+                    <i class="bi bi-plus-lg me-1"></i>Create New
+                </span>
+            </a>
+        </div>
+
+        <!-- Add Department Quick -->
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Department" asp-action="CreateDepartment" class="nav-card">
+                <div class="nav-icon bg-gradient-info">
+                    <i class="bi bi-folder-plus"></i>
+                </div>
+                <h3>Add Department</h3>
+                <p>Create new departments to organize your team structure</p>
+                <span class="feature-badge bg-info bg-opacity-10 text-info">
+                    <i class="bi bi-plus-lg me-1"></i>Create New
+                </span>
+            </a>
+        </div>
+
+        <!-- Employee Reports -->
+        <div class="col-md-6 col-lg-4">
+            <a asp-controller="Employee" asp-action="GetAll" class="nav-card">
+                <div class="nav-icon bg-gradient-danger">
+                    <i class="bi bi-graph-up-arrow"></i>
+                </div>
+                <h3>Reports</h3>
+                <p>View employee statistics, salary reports, and department analytics</p>
+                <span class="feature-badge bg-danger bg-opacity-10 text-danger">
+                    <i class="bi bi-bar-chart me-1"></i>View Reports
+                </span>
+            </a>
+        </div>
+
+        <!-- Settings -->
+        <div class="col-md-6 col-lg-4">
+            <a href="#" class="nav-card" onclick="alert('Settings coming soon!')">
+                <div class="nav-icon bg-gradient-dark">
+                    <i class="bi bi-gear-fill"></i>
+                </div>
+                <h3>Settings</h3>
+                <p>System configuration, user management, and application settings</p>
+                <span class="feature-badge bg-secondary bg-opacity-10 text-secondary">
+                    <i class="bi bi-clock me-1"></i>Coming Soon
+                </span>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Quick Actions -->
+    <h4 class="section-title">
+        <i class="bi bi-lightning-fill text-warning"></i>
+        Quick Actions
+    </h4>
+    <div class="row g-3">
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Employee" asp-action="Create" class="quick-action">
+                <div class="quick-icon bg-gradient-primary">
+                    <i class="bi bi-person-plus"></i>
+                </div>
+                <div class="quick-info">
+                    <h5>New Employee</h5>
+                    <small>Add employee quickly</small>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Department" asp-action="CreateDepartment" class="quick-action">
+                <div class="quick-icon bg-gradient-success">
+                    <i class="bi bi-building-add"></i>
+                </div>
+                <div class="quick-info">
+                    <h5>New Department</h5>
+                    <small>Create department</small>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Employee" asp-action="GetAll" class="quick-action">
+                <div class="quick-icon bg-gradient-warning">
+                    <i class="bi bi-search"></i>
+                </div>
+                <div class="quick-info">
+                    <h5>Find Employee</h5>
+                    <small>Search employees</small>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <a asp-controller="Department" asp-action="GetAllDepartment" class="quick-action">
+                <div class="quick-icon bg-gradient-info">
+                    <i class="bi bi-list-check"></i>
+                </div>
+                <div class="quick-info">
+                    <h5>All Departments</h5>
+                    <small>View department list</small>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-5 pt-4 border-top">
+        <p class="text-muted mb-0">
+            <i class="bi bi-heart-fill text-danger me-1"></i>
+            Built with ASP.NET Core MVC | Company Management System
+        </p>
+    </div>
 </div>
