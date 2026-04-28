@@ -43,6 +43,11 @@ namespace CompanyManagementMVC.BLL.Mapper
             CreateMap<UpdateDepartmentVM, Department>()
                 .ForMember(dest => dest.IsDeleted, opt => opt.Ignore())
                 .ForMember(dest => dest.Employees, opt => opt.Ignore());
+            CreateMap<Department, DepartmentVM>()
+    .ForMember(dest => dest.Employees,
+               opt => opt.MapFrom(src => src.Employees));
+
+            CreateMap<Employee, CreateEmployeeVM>();
         }
     }
 }

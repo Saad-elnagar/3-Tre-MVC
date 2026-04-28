@@ -9,7 +9,7 @@ namespace CompanyManagementSystem.PL.Controllers
     public class EmployeeController : Controller
     {
         private readonly IEmployeeService _employeeService;
-        private readonly IDepartmentService _departmentService;  // ✅ عشان الـ Dropdown
+        private readonly IDepartmentService _departmentService;
 
         public EmployeeController(IEmployeeService employeeService, IDepartmentService departmentService)
         {
@@ -17,99 +17,87 @@ namespace CompanyManagementSystem.PL.Controllers
             _departmentService = departmentService;
         }
 
-        public IActionResult Index() => RedirectToAction(nameof(GetAll));
 
-        // ✅ GET: All Employees (with Department via Specification + AutoMapper)
+        [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var result = await _employeeService.GetActiveEmployeesAsync();
 
-            if (!result.IsSuccess)
-            {
-                TempData["Error"] = result.Message;
-                return View(new List<GetEmployeeVM>());
-            }
+            if (TempData["Success"] != null)
+                ViewBag.Success = TempData["Success"];
+            if (TempData["Error"] != null)
+                ViewBag.Error = TempData["Error"];
 
-            return View(result.Data);
+            return View(result.Data ?? new List<GetEmployeeVM>());
         }
 
-        // ✅ GET: Details (with Department included via Spec)
-        public async Task<IActionResult> Details(int id)
-        {
-            var result = await _employeeService.GetEmployeeByIdAsync(id);
-
-            if (!result.IsSuccess || result.Data is null)
-            {
-                TempData["Error"] = result.Message;
-                return RedirectToAction(nameof(GetAll));
-            }
-
-            return View(result.Data);
-        }
-
-        // ✅ GET: Create + Department Dropdown
+        // ====== GET: Create Form + Dropdown ======
+        [HttpGet]
         public async Task<IActionResult> Create()
         {
-            await PopulateDepartmentsDropdown();
+            await FillDepartmentsDropdown();
             return View();
         }
 
-        // ✅ POST: Create
+        // ====== POST: Create ======
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateEmployeeVM model)
         {
+            // ✅ 1. لو فيه Validation Error → اعرضهم + املأ Dropdown تاني
             if (!ModelState.IsValid)
             {
-                await PopulateDepartmentsDropdown();
+                await FillDepartmentsDropdown();
                 return View(model);
             }
 
+            // ✅ 2. نادي الـ Service
             var result = await _employeeService.AddEmployeeAsync(model);
 
+            // ✅ 3. لو فشل من الـ Service → اعرض Error + املأ Dropdown تاني
             if (!result.IsSuccess)
             {
-                TempData["Error"] = result.Message;
-                await PopulateDepartmentsDropdown();
+                ModelState.AddModelError("", result.Message);
+                await FillDepartmentsDropdown();
                 return View(model);
             }
 
+            // ✅ 4. نجح → روح لـ GetAll
             TempData["Success"] = result.Message;
             return RedirectToAction(nameof(GetAll));
         }
 
-        // ✅ GET: Edit + Department Dropdown
+        // ====== GET: Edit ======
+        [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var result = await _employeeService.GetEmployeeByIdAsync(id);
-
             if (!result.IsSuccess || result.Data is null)
             {
                 TempData["Error"] = result.Message;
                 return RedirectToAction(nameof(GetAll));
             }
 
-            // Map GetEmployeeVM → EmployeeVM
             var vm = new UpdateEmployeeVM
             {
                 Id = result.Data.Id,
                 Name = result.Data.Name,
                 Salary = result.Data.Salary,
-                DepartmentId = result.Data.DepartmentId ?? 0  // لو عندك DepartmentId في GetEmployeeVM
+                DepartmentId = result.Data.DepartmentId ?? 0
             };
 
-            await PopulateDepartmentsDropdown();
+            await FillDepartmentsDropdown();
             return View(vm);
         }
 
-        // ✅ POST: Edit (with Department)
+        // ====== POST: Edit ======
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateEmployeeVM model)
         {
             if (!ModelState.IsValid)
             {
-                await PopulateDepartmentsDropdown();
+                await FillDepartmentsDropdown();
                 return View(model);
             }
 
@@ -117,8 +105,8 @@ namespace CompanyManagementSystem.PL.Controllers
 
             if (!result.IsSuccess)
             {
-                TempData["Error"] = result.Message;
-                await PopulateDepartmentsDropdown();
+                ModelState.AddModelError("", result.Message);
+                await FillDepartmentsDropdown();
                 return View(model);
             }
 
@@ -126,7 +114,7 @@ namespace CompanyManagementSystem.PL.Controllers
             return RedirectToAction(nameof(GetAll));
         }
 
-        // ✅ POST: Delete (Soft Delete)
+        // ====== POST: Delete ======
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -136,18 +124,8 @@ namespace CompanyManagementSystem.PL.Controllers
             return RedirectToAction(nameof(GetAll));
         }
 
-        // ✅ POST: Toggle State
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ToggleState(int id)
-        {
-            var result = await _employeeService.ToggleStateAsync(id);
-            TempData[result.IsSuccess ? "Success" : "Error"] = result.Message;
-            return RedirectToAction(nameof(GetAll));
-        }
-
-        // ✅ Helper: يملى الـ Dropdown
-        private async Task PopulateDepartmentsDropdown()
+        // ====== Helper: يملى Dropdown ======
+        private async Task FillDepartmentsDropdown()
         {
             var result = await _departmentService.GetAllDepartmentsAsync();
             ViewBag.Departments = new SelectList(result.Data ?? new List<DepartmentVM>(), "Id", "Name");

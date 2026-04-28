@@ -3,35 +3,139 @@
     ViewData["Title"] = "Employee Details";
 }
 
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow-sm">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Employee Details</h5>
-                <span class="badge @(Model.IsDeleted ? "bg-secondary" : "bg-success")">
-                    @(Model.IsDeleted ? "Inactive" : "Active")
-                </span>
-            </div>
-            <div class="card-body">
-                <dl class="row mb-0">
-                    <dt class="col-sm-4 text-muted">ID</dt>
-                    <dd class="col-sm-8">@Model.Id</dd>
+<style>
+    .profile-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        overflow: hidden;
+    }
 
-                    <dt class="col-sm-4 text-muted">Name</dt>
-                    <dd class="col-sm-8">@Model.Name</dd>
+    .profile-header {
+        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        color: white;
+        padding: 3rem 2rem;
+        text-align: center;
+        position: relative;
+    }
 
-                    <dt class="col-sm-4 text-muted">Salary</dt>
-                    <dd class="col-sm-8">@Model.Salary.ToString("C")</dd>
-                </dl>
-            </div>
-            <div class="card-footer d-flex gap-2">
-                <a asp-action="Edit" asp-route-id="@Model.Id"
-                   class="btn btn-primary btn-sm">
-                    <i class="bi bi-pencil me-1"></i>Edit
-                </a>
-                <a asp-action="GetAll" class="btn btn-outline-secondary btn-sm">
-                    <i class="bi bi-arrow-left me-1"></i>Back
-                </a>
+    .avatar-large {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: white;
+        color: #11998e;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 0 auto 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    }
+
+    .profile-body {
+        padding: 2rem;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem 0;
+        border-bottom: 1px solid #f1f3f5;
+    }
+
+    .info-label {
+        color: #868e96;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .info-value {
+        font-weight: 700;
+        color: #495057;
+    }
+
+    .status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .btn-back {
+        background: #f8f9fa;
+        color: #495057;
+        border: 2px solid #e9ecef;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.2s ease;
+    }
+
+        .btn-back:hover {
+            background: #e9ecef;
+        }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #f59f00 0%, #f76707 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 2rem;
+        border-radius: 12px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <div class="avatar-large">
+                        @(Model.Name.Split(' ').Select(n => n[0]).Take(2).Aggregate("", (a, b) => a + b))
+                    </div>
+                    <h3 class="mb-1">@Model.Name</h3>
+                    <span class="badge bg-white text-success">@Model.DepartmentName</span>
+                </div>
+                <div class="profile-body">
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-hash"></i> Employee ID</span>
+                        <span class="info-value">#@Model.Id</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-cash"></i> Salary</span>
+                        <span class="info-value">@Model.Salary.ToString("C")</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label"><i class="bi bi-building"></i> Department</span>
+                        <span class="info-value">@(Model.DepartmentName ?? "—")</span>
+                    </div>
+                    <div class="info-row" style="border-bottom: none;">
+                        <span class="info-label"><i class="bi bi-circle-fill"></i> Status</span>
+                        @if (Model.IsDeleted)
+                        {
+                            <span class="status-badge bg-danger text-white">Deleted</span>
+                        }
+                        else
+                        {
+
+                            <span class="status-badge bg-success text-white">Active</span>
+                        }
+                    </div>
+
+                    <div class="d-flex gap-3 mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit flex-fill">
+                            <i class="bi bi-pencil me-2"></i>Edit
+                        </a>
+                        <a asp-action="GetAll" class="btn btn-back flex-fill">
+                            <i class="bi bi-arrow-left me-2"></i>Back
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
