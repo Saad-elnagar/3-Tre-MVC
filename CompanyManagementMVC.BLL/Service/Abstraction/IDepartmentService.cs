@@ -10,5 +10,6 @@ namespace CompanyManagementMVC.BLL.Service.Abstraction
         Task<Response<bool>> DeleteDepartmentAsync(int id);
         Task<Response<DepartmentVM?>> GetDepartmentByIdAsync(int id);
         Task<Response<int>> UpdateDepartmentAsync(UpdateDepartmentVM model);
+        Task<Response<DepartmentVM?>> GetDepartmentWithEmployees(int id);
     }
 }

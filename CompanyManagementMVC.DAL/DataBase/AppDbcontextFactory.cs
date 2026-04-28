@@ -1,28 +1,19 @@
-﻿//using Microsoft.EntityFrameworkCore;
-//using Microsoft.EntityFrameworkCore.Design;
-//using Microsoft.Extensions.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 
+namespace CompanyManagementMVC.DAL.DataBase
+{
+    public class AppDbcontextFactory : IDesignTimeDbContextFactory<AppDbcontext>
+    {
+        public AppDbcontext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<AppDbcontext>();
 
-//namespace CompanyManagementMVC.DAL.DataBase
-//{
-//    public class AppDbcontextFactory : IDesignTimeDbContextFactory<AppDbcontext>
-//    {
-//        public AppDbcontext CreateDbContext(string[] args)
-//        {
-//            var optionsBuilder = new DbContextOptionsBuilder<AppDbcontext>();
+            optionsBuilder.UseSqlServer(
+                "Server=.;Database=CompanyManagementDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=true"
+            );
 
-//            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "CompanyManagementSystem");
-
-//            var configuration = new ConfigurationBuilder()
-//                .SetBasePath(basePath)
-//                .AddJsonFile("appsettings.json", optional: false)
-//                .Build();
-
-//            var connectionString = configuration.GetConnectionString("DefaultConnection");
-
-//            optionsBuilder.UseSqlServer(connectionString);
-
-//            return new AppDbcontext(optionsBuilder.Options);
-//        }
-//    }
-//}
+            return new AppDbcontext(optionsBuilder.Options);
+        }
+    }
+}

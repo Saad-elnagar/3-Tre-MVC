@@ -31,7 +31,11 @@ namespace CompanyManagementMVC.BLL.Mapper
             // ==================== Department Mappings ====================
 
             // Entity → VM (Get)
-            CreateMap<Department, DepartmentVM>();
+            CreateMap<Department, DepartmentVM>()
+       .ForMember(dest => dest.Employees,
+                  opt => opt.MapFrom(src => src.Employees != null
+                      ? src.Employees.Where(e => !e.IsDeleted).ToList()
+                      : null));
 
             // VM → Entity (Create)
             CreateMap<CreateDepartmentVM, Department>()

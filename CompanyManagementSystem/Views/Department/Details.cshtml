@@ -1,6 +1,6 @@
 ﻿Details@model CompanyManagementMVC.BLL.ModelVM.Department.DepartmentVM
 @{
-    ViewData["Title"] = $"Department - {Model.Name}";
+  //  ViewData["Title"] = $"Department - {Model.Name}";
 }
 
 <style>
@@ -288,7 +288,7 @@
                 </tr>
             </thead>
             <tbody>
-                @if (Model.Employees != null && Model.Employees.Any())
+                    @if (Model.Employees != null && Model.Employees.Count > 0)
                 {
                     foreach (var emp in Model.Employees)
                     {

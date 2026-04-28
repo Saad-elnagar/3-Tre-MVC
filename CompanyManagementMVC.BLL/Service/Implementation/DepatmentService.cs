@@ -8,7 +8,8 @@ using CompanyManagementMVC.DAL.Specification;
 
 namespace CompanyManagementMVC.BLL.Service.Implementation
 {
-    public class DepartmentService : IDepartmentService
+    public class DepartmentService : 
+        IDepartmentService
     {
         private readonly IDepartmentRepo _departmentRepo;
         private readonly IMapper _mapper;
@@ -118,5 +119,27 @@ namespace CompanyManagementMVC.BLL.Service.Implementation
                 return Response<int>.Failure(ex.Message);
             }
         }
+
+
+
+        public async Task<Response<DepartmentVM?>> GetDepartmentWithEmployees(int id)
+        {
+            try
+            {
+                var spec = new DepartmentWithEmployeesSpecification(id);
+                var department = await _departmentRepo.GetBySpecAsync(spec);
+
+                if (department is null)
+                    return Response<DepartmentVM?>.Failure($"Department with ID {id} not found.");
+
+                var mapped = _mapper.Map<DepartmentVM>(department);  
+                return Response<DepartmentVM?>.Success(mapped);
+            }
+            catch (Exception ex)
+            {
+                return Response<DepartmentVM?>.Failure(ex.Message);
+            }
+        }
+
     }
 }

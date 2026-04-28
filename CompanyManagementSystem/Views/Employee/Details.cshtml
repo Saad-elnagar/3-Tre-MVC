@@ -1,142 +1,363 @@
-﻿@model CompanyManagementMVC.BLL.ModelVM.Employee.GetEmployeeVM
+﻿@model CompanyManagementMVC.BLL.ModelVM.Department.DepartmentVM
 @{
-    ViewData["Title"] = "Employee Details";
+    ViewData["Title"] = $"Department - {Model.Name}";
 }
 
 <style>
-    .profile-card {
-        background: white;
+    :root {
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --success-gradient: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        --warning-gradient: linear-gradient(135deg, #f59f00 0%, #f76707 100%);
+        --card-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        --hover-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+
+    .dept-header {
+        background: var(--primary-gradient);
+        color: white;
+        padding: 3rem 2rem;
         border-radius: 24px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        margin-bottom: 2rem;
+        position: relative;
         overflow: hidden;
     }
 
-    .profile-header {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-        color: white;
-        padding: 3rem 2rem;
-        text-align: center;
-        position: relative;
-    }
+        .dept-header::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -5%;
+            width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
 
-    .avatar-large {
-        width: 100px;
-        height: 100px;
-        border-radius: 50%;
-        background: white;
-        color: #11998e;
+    .dept-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255,255,255,0.2);
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+
+    .dept-header h2 {
         font-weight: 700;
-        margin: 0 auto 1rem;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        font-size: 2.5rem;
+        margin: 0;
     }
 
-    .profile-body {
-        padding: 2rem;
+    .dept-header p {
+        opacity: 0.9;
+        font-size: 1.1rem;
+        margin: 0.5rem 0 0 0;
     }
 
-    .info-row {
+    .stats-row {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 1rem 0;
-        border-bottom: 1px solid #f1f3f5;
+        gap: 1.5rem;
+        margin-top: 2rem;
     }
 
-    .info-label {
-        color: #868e96;
-        font-weight: 500;
+    .stat-item {
+        background: rgba(255,255,255,0.15);
+        padding: 1rem 1.5rem;
+        border-radius: 16px;
+        backdrop-filter: blur(10px);
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        font-size: 0.85rem;
+        opacity: 0.8;
+    }
+
+    .section-title {
+        font-weight: 700;
+        color: #495057;
+        margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
 
-    .info-value {
-        font-weight: 700;
-        color: #495057;
-    }
-
-    .status-badge {
-        padding: 0.5rem 1rem;
+    .table-container {
+        background: white;
         border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
+        box-shadow: var(--card-shadow);
+        overflow: hidden;
     }
 
-    .btn-back {
+    .custom-table thead th {
         background: #f8f9fa;
-        color: #495057;
-        border: 2px solid #e9ecef;
-        padding: 0.75rem 2rem;
-        border-radius: 12px;
+        border: none;
         font-weight: 600;
+        color: #495057;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        padding: 1.2rem 1.5rem;
+    }
+
+    .custom-table tbody td {
+        border: none;
+        padding: 1.2rem 1.5rem;
+        vertical-align: middle;
+    }
+
+    .custom-table tbody tr {
+        border-bottom: 1px solid #f1f3f5;
         transition: all 0.2s ease;
     }
 
-        .btn-back:hover {
-            background: #e9ecef;
+        .custom-table tbody tr:hover {
+            background: #f8f9ff;
+            transform: scale(1.01);
+        }
+
+    .avatar-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--primary-gradient);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .salary-text {
+        font-weight: 700;
+        color: #495057;
+        font-size: 0.95rem;
+    }
+
+    .badge-active {
+        background: #e6f8f5;
+        color: #0ca678;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-deleted {
+        background: #ffe3e3;
+        color: #e03131;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .action-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        cursor: pointer;
+        text-decoration: none;
+    }
+
+    .btn-view {
+        background: #e7f5ff;
+        color: #1971c2;
+    }
+
+        .btn-view:hover {
+            background: #1971c2;
+            color: white;
         }
 
     .btn-edit {
-        background: linear-gradient(135deg, #f59f00 0%, #f76707 100%);
-        color: white;
+        background: #fff9db;
+        color: #f59f00;
+    }
+
+        .btn-edit:hover {
+            background: #f59f00;
+            color: white;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem;
+        color: #adb5bd;
+    }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+    .btn-back {
+        background: white;
+        color: #667eea;
         border: none;
-        padding: 0.75rem 2rem;
+        padding: 0.75rem 1.5rem;
         border-radius: 12px;
         font-weight: 600;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        text-decoration: none;
     }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            color: #764ba2;
+        }
+
+    .btn-add-emp {
+        background: var(--success-gradient);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+        .btn-add-emp:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(17,153,142,0.3);
+            color: white;
+        }
 </style>
 
-<div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-7 col-lg-5">
-            <div class="profile-card">
-                <div class="profile-header">
-                    <div class="avatar-large">
-                        @(Model.Name.Split(' ').Select(n => n[0]).Take(2).Aggregate("", (a, b) => a + b))
-                    </div>
-                    <h3 class="mb-1">@Model.Name</h3>
-                    <span class="badge bg-white text-success">@Model.DepartmentName</span>
-                </div>
-                <div class="profile-body">
-                    <div class="info-row">
-                        <span class="info-label"><i class="bi bi-hash"></i> Employee ID</span>
-                        <span class="info-value">#@Model.Id</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label"><i class="bi bi-cash"></i> Salary</span>
-                        <span class="info-value">@Model.Salary.ToString("C")</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label"><i class="bi bi-building"></i> Department</span>
-                        <span class="info-value">@(Model.DepartmentName ?? "—")</span>
-                    </div>
-                    <div class="info-row" style="border-bottom: none;">
-                        <span class="info-label"><i class="bi bi-circle-fill"></i> Status</span>
-                        @if (Model.IsDeleted)
-                        {
-                            <span class="status-badge bg-danger text-white">Deleted</span>
-                        }
-                        else
-                        {
+<div class="container-fluid px-4 py-4">
 
-                            <span class="status-badge bg-success text-white">Active</span>
-                        }
-                    </div>
+    <!-- Department Header -->
+    <div class="dept-header">
+        <div class="dept-icon">
+            <i class="bi bi-building"></i>
+        </div>
+        <h2>@Model.Name</h2>
+        <p>@Model.Description</p>
 
-                    <div class="d-flex gap-3 mt-4">
-                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-edit flex-fill">
-                            <i class="bi bi-pencil me-2"></i>Edit
-                        </a>
-                        <a asp-action="GetAll" class="btn btn-back flex-fill">
-                            <i class="bi bi-arrow-left me-2"></i>Back
-                        </a>
-                    </div>
-                </div>
+        <div class="stats-row">
+            <div class="stat-item">
+                <div class="stat-value">@(Model.Employees?.Count ?? 0)</div>
+                <div class="stat-label">Employees</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">@(Model.Employees?.Count(e => !e.IsDeleted) ?? 0)</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">@(Model.Employees?.Sum(e => e.Salary).ToString("C") ?? "$0.00")</div>
+                <div class="stat-label">Total Salaries</div>
             </div>
         </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="section-title">
+            <i class="bi bi-people-fill"></i>
+            Employees in this Department
+        </h4>
+        <div class="d-flex gap-2">
+            <a asp-action="Create" asp-controller="Employee" class="btn btn-add-emp">
+                <i class="bi bi-plus-lg me-2"></i>Add Employee
+            </a>
+            <a asp-action="GetAllDepartment" class="btn btn-back">
+                <i class="bi bi-arrow-left me-2"></i>Back to Departments
+            </a>
+        </div>
+    </div>
+
+    <!-- Employees Table -->
+    <div class="table-container">
+        <table class="table custom-table">
+            <thead>
+                <tr>
+                    <th>Employee</th>
+                    <th>Salary</th>
+                    <th>Status</th>
+                    <th class="text-center">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Employees != null && Model.Employees.Count > 0)
+                {
+                    foreach (var emp in Model.Employees)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-circle me-3">
+                                        @(emp.Name.Split(' ').Select(n => n[0]).Take(2).Aggregate("", (a, b) => a + b))
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">@emp.Name</div>
+                                        <small class="text-muted">ID: #@emp.Id</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="salary-text">@emp.Salary.ToString("C")</span>
+                            </td>
+                            <td>
+                                @if (emp.IsDeleted)
+                                {
+                                    <span class="badge-deleted">
+                                        <i class="bi bi-x-circle me-1"></i>Deleted
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge-active">
+                                        <i class="bi bi-check-circle me-1"></i>Active
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                <a asp-action="Details" asp-controller="Employee" asp-route-id="@emp.Id"
+                                   class="action-btn btn-view me-1" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                                <a asp-action="Edit" asp-controller="Employee" asp-route-id="@emp.Id"
+                                   class="action-btn btn-edit" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="4">
+                            <div class="empty-state">
+                                <i class="bi bi-inbox"></i>
+                                <h5>No Employees Yet</h5>
+                                <p>This department doesn't have any employees assigned.</p>
+                                <a asp-action="Create" asp-controller="Employee" class="btn btn-success mt-2">
+                                    <i class="bi bi-plus-lg me-2"></i>Add First Employee
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>

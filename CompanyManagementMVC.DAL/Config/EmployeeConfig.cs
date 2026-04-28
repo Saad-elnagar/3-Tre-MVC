@@ -14,6 +14,10 @@ namespace CompanyManagementMVC.DAL.Config
             builder.Property(e => e.Salary)
                 .IsRequired()
                 .HasColumnType("decimal(18,2)");
+            builder.HasOne(e => e.Department)
+              .WithMany(d => d.Employees)  
+              .HasForeignKey(e => e.DepartmentId)
+              .OnDelete(DeleteBehavior.Restrict);
 
         }
     }

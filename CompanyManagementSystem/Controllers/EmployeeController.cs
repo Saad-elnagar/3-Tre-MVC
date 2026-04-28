@@ -31,7 +31,7 @@ namespace CompanyManagementSystem.PL.Controllers
             return View(result.Data ?? new List<GetEmployeeVM>());
         }
 
-        // ====== GET: Create Form + Dropdown ======
+       
         [HttpGet]
         public async Task<IActionResult> Create()
         {
@@ -39,7 +39,7 @@ namespace CompanyManagementSystem.PL.Controllers
             return View();
         }
 
-        // ====== POST: Create ======
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateEmployeeVM model)
@@ -67,7 +67,7 @@ namespace CompanyManagementSystem.PL.Controllers
             return RedirectToAction(nameof(GetAll));
         }
 
-        // ====== GET: Edit ======
+       
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -90,7 +90,7 @@ namespace CompanyManagementSystem.PL.Controllers
             return View(vm);
         }
 
-        // ====== POST: Edit ======
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(UpdateEmployeeVM model)
@@ -114,7 +114,7 @@ namespace CompanyManagementSystem.PL.Controllers
             return RedirectToAction(nameof(GetAll));
         }
 
-        // ====== POST: Delete ======
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int id)
@@ -124,7 +124,7 @@ namespace CompanyManagementSystem.PL.Controllers
             return RedirectToAction(nameof(GetAll));
         }
 
-        // ====== Helper: يملى Dropdown ======
+       
         private async Task FillDepartmentsDropdown()
         {
             var result = await _departmentService.GetAllDepartmentsAsync();

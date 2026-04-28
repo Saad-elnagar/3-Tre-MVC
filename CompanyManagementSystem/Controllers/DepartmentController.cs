@@ -1,6 +1,7 @@
 ﻿using CompanyManagementMVC.BLL.ModelVM.Department;
 using CompanyManagementMVC.BLL.Service.Abstraction;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CompanyManagementSystem.PL.Controllers
 {
@@ -34,14 +35,17 @@ namespace CompanyManagementSystem.PL.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(int id)
         {
-            var result = await _departmentService.GetDepartmentByIdAsync(id);
+            // ✅ تست يدوي بدون Service
+            var dept = await _departmentService.GetDepartmentByIdAsync(id);
+                
 
-            if (!result.IsSuccess || result.Data is null)
-            {
-                TempData["Error"] = result.Message;
-                return RedirectToAction(nameof(GetAllDepartment));
+            var result = await _departmentService.GetDepartmentWithEmployees(id);
+
+                if (!result.IsSuccess)
+                {
+                    TempData["Error"] = result.Message;
+                    return RedirectToAction(nameof(GetAllDepartment));
             }
-
             return View(result.Data);
         }
 

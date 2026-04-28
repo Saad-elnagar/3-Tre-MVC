@@ -15,6 +15,9 @@ namespace CompanyManagementMVC.DAL.Config
             builder.Property(D=> D.Id).UseIdentityColumn(10,10);
             builder.Property(D => D.Name).HasMaxLength(50).IsRequired();
             builder.Property(D => D.Description).HasMaxLength(50);
+            builder.HasMany(d => d.Employees)
+               .WithOne(e => e.Department)
+               .HasForeignKey(e => e.DepartmentId);
             builder.HasKey(D => D.Id);
             builder.Property(D => D.CreatedOn).HasDefaultValueSql("getdate()").ValueGeneratedOnAdd();
             builder.Property(D => D.UpdatedOn).HasDefaultValueSql("getdate()").ValueGeneratedOnAddOrUpdate();
