@@ -1,5 +1,7 @@
 # Company Management System
 
+[![Build](https://github.com/Saad-elnagar/3-Tre-MVC/actions/workflows/dotnet-build.yml/badge.svg?branch=master)](https://github.com/Saad-elnagar/3-Tre-MVC/actions/workflows/dotnet-build.yml)
+
 An ASP.NET Core MVC application for managing employees and departments, organized into presentation, business-logic, and data-access projects.
 
 ## Features
